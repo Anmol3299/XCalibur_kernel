@@ -1303,6 +1303,8 @@ static void if_tag_stat_update(const char *ifname, uid_t uid,
 	spin_lock_bh(&iface_stat_list_lock);
 	iface_entry = get_iface_entry(ifname);
 	if (!iface_entry) {
+		pr_err_ratelimited("qtaguid: tag_stat: stat_update() "
+				   "%s not found\n", ifname);
 		spin_unlock_bh(&iface_stat_list_lock);
 		pr_err_ratelimited("qtaguid: tag_stat: stat_update() "
 				   "%s not found\n", ifname);
@@ -1652,6 +1654,7 @@ static bool qtaguid_mt(const struct sk_buff *skb, struct xt_action_param *par)
 	struct sock *sk;
 	uid_t sock_uid;
 	bool res;
+	bool set_sk_callback_lock = false;
 	/*
 	 * TODO: unhack how to force just accounting.
 	 * For now we only do tag stats when the uid-owner is not requested
