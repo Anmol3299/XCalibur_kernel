@@ -2537,7 +2537,7 @@ static void rcu_kick_nohz_cpu(int cpu)
  */
 static void rcu_bind_gp_kthread(void)
 {
-	int cpu = ACCESS_ONCE(tick_do_timer_cpu);
+	int cpu = tick_do_timer_cpu;
 
 	if (cpu < 0 || cpu >= nr_cpu_ids)
 		return;
