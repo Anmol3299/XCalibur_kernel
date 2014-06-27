@@ -258,6 +258,8 @@ void rcu_check_callbacks(int cpu, int user)
 	else if (!in_softirq())
 		rcu_bh_qs(cpu);
 	rcu_preempt_check_callbacks();
+	if (user)
+		rcu_note_voluntary_context_switch(current);
 }
 
 /*
