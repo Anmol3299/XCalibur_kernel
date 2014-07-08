@@ -2079,7 +2079,7 @@ static bool __call_rcu_nocb(struct rcu_data *rdp, struct rcu_head *rhp,
 {
 
 	if (!rcu_is_nocb_cpu(rdp->cpu))
-		return 0;
+		return false;
 	__call_rcu_nocb_enqueue(rdp, rhp, &rhp->next, 1, lazy, flags);
 	if (__is_kfree_rcu_offset((unsigned long)rhp->func))
 		trace_rcu_kfree_callback(rdp->rsp->name, rhp,
@@ -2087,8 +2087,9 @@ static bool __call_rcu_nocb(struct rcu_data *rdp, struct rcu_head *rhp,
 					 rdp->qlen_lazy, rdp->qlen);
 	else
 		trace_rcu_callback(rdp->rsp->name, rhp,
-				   rdp->qlen_lazy, rdp->qlen);
-	return 1;
+				   -atomic_long_read(&rdp->nocb_q_count_lazy),
+				   -atomic_long_read(&rdp->nocb_q_count));
+	return true;
 }
 
 /*
