@@ -1156,7 +1156,7 @@ static int ngd_slim_rx_msgq_thread(void *data)
 		u8 wbuf[8];
 
 		set_current_state(TASK_INTERRUPTIBLE);
-		wait_for_completion(notify);
+		wait_for_completion_interruptible(notify);
 
 		txn.dt = SLIM_MSG_DEST_LOGICALADDR;
 		txn.ec = 0;
