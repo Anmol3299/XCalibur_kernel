@@ -24,6 +24,7 @@
 #include <linux/cdev.h>
 #include <linux/regulator/consumer.h>
 #include <linux/mm.h>
+#include <linux/dma-attrs.h>
 #include <linux/kthread.h>
 
 /* The number of memstore arrays limits the number of contexts allowed.
