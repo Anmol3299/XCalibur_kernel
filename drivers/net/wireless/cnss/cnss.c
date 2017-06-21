@@ -1437,6 +1437,7 @@ static void cnss_wlan_memory_expansion(void)
 
 	if (!cnss_seg_info) {
 		pr_debug("cnss: cnss_seg_info is NULL\n");
+		mutex_unlock(&penv->fw_setup_stat_lock);
 		goto end;
 	}
 
