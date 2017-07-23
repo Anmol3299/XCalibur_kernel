@@ -193,7 +193,7 @@ static DEFINE_MUTEX(bcl_hotplug_mutex);
 static bool bcl_hotplug_enabled;
 
 #ifdef CONFIG_SMP
-static void __ref bcl_handle_hotplug(struct work_struct *work)
+static void bcl_handle_hotplug(struct work_struct *work)
 {
 	int ret = 0, _cpu = 0;
 	uint32_t prev_hotplug_request = 0;
@@ -240,13 +240,13 @@ handle_hotplug_exit:
 	return;
 }
 #else
-static void __ref bcl_handle_hotplug(struct work_struct *work)
+static void bcl_handle_hotplug(struct work_struct *work)
 {
 	return;
 }
 #endif
 
-static int __ref bcl_cpu_ctrl_callback(struct notifier_block *nfb,
+static int bcl_cpu_ctrl_callback(struct notifier_block *nfb,
 	unsigned long action, void *hcpu)
 {
 	uint32_t cpu = (uintptr_t)hcpu;
@@ -264,7 +264,7 @@ static int __ref bcl_cpu_ctrl_callback(struct notifier_block *nfb,
 	return NOTIFY_OK;
 }
 
-static struct notifier_block __refdata bcl_cpu_notifier = {
+static struct notifier_block bcl_cpu_notifier = {
 	.notifier_call = bcl_cpu_ctrl_callback,
 };
 
