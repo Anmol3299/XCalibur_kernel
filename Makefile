@@ -240,8 +240,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 	  else if [ -x /bin/bash ]; then echo /bin/bash; \
 	  else echo sh; fi ; fi)
 
-HOSTCC       = $(CCACHE) gcc
-HOSTCXX      = $(CCACHE) g++
+HOSTCC       = gcc
+HOSTCXX      = g++
 HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
 HOSTCXXFLAGS = -O2 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block
 
@@ -327,8 +327,8 @@ include $(srctree)/scripts/Kbuild.include
 
 AS		= $(CROSS_COMPILE)as
 LD		= $(CROSS_COMPILE)ld
-LD	       += -O2 --strip-debug
-CC		= $(CCACHE) $(CROSS_COMPILE)gcc
+LD	       += --strip-debug -O2
+CC		= $(CROSS_COMPILE)gcc
 CC	       += -O2 -fmodulo-sched -fmodulo-sched-allow-regmoves
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
