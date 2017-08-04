@@ -242,8 +242,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89
-HOSTCXXFLAGS = -O2 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-nest-optimize
+HOSTCXXFLAGS = -O2 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-nest-optimize
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -323,18 +323,25 @@ MAKEFLAGS += --include-dir=$(srctree)
 $(srctree)/scripts/Kbuild.include: ;
 include $(srctree)/scripts/Kbuild.include
 
+# Set optimization flags for gcc
+ CC_FLAGS := -O2 -fmodulo-sched -fmodulo-sched-allow-regmoves \
+             -fira-loop-pressure -ftree-vectorize \
+             -fshrink-wrap-separate -fpredictive-commoning -mtune=cortex-a53 \
+             -Wno-maybe-uninitialized -Wno-misleading-indentation \
+             -Wno-array-bounds -Wno-shift-overflow
+
+ LD_FLAGS := -O2 --sort-common --strip-debug
+
 # Make variables (CC, etc...)
 
 AS		= $(CROSS_COMPILE)as
-LD		= $(CROSS_COMPILE)ld
-LD	       += --strip-debug -O2
-CC		= $(CROSS_COMPILE)gcc
-CC	       += -O2 -fmodulo-sched -fmodulo-sched-allow-regmoves
+LD		= $(CROSS_COMPILE)ld $(LD_FLAGS)
+CC		= $(CROSS_COMPILE)gcc $(CC_FLAGS)
 CPP		= $(CC) -E
 AR		= $(CROSS_COMPILE)ar
 NM		= $(CROSS_COMPILE)nm
 STRIP		= $(CROSS_COMPILE)strip
-OBJCOPY		= $(CROSS_COMPILE)objcopy
+OBJCOPY		= $(CROSS_COMPILE)objcopy --remove-section=.note.gnu.build-id
 OBJDUMP		= $(CROSS_COMPILE)objdump
 AWK		= awk
 GENKSYMS	= scripts/genksyms/genksyms
@@ -346,16 +353,7 @@ CHECK		= sparse
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
 
-GRAPHITE	= -fgraphite -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block
-
-# optimization
-ARM64_ARCH_OPT := -mcpu=cortex-a53 -mtune=cortex-a53 \
-                  -g0 \
-                  -DNDEBUG \
-                  -fomit-frame-pointer \
-                  -fmodulo-sched \
-                  -fmodulo-sched-allow-regmoves \
-                  -fivopts
+GRAPHITE       := -fgraphite -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-nest-optimize
 
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
@@ -397,14 +395,14 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
                    -O2 -g0 -DNDEBUG \
                    -fgnu89-inline -fivopts \
                    -fmodulo-sched -fmodulo-sched-allow-regmoves \
-                   -fno-tree-vectorize -ffast-math \
+                   -fno-tree-vectorize -ffast-math -fsched2-use-superblocks \
                    -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
                    -fno-aggressive-loop-optimizations \
                    -mcpu=cortex-a53 -mtune=cortex-a53
 
 # These flags need a special toolchain to split them off
 KBUILD_CFLAGS	+= $(call cc-option,-mlow-precision-recip-sqrt,) \
-$(call cc-option,-mpc-relative-literal-loads,)
+                   $(call cc-option,-mpc-relative-literal-loads,)
 
 KBUILD_AFLAGS_KERNEL :=
 KBUILD_CFLAGS_KERNEL :=
