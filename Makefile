@@ -398,7 +398,7 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
                    -fno-tree-vectorize -ffast-math -fsched2-use-superblocks \
                    -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
                    -fno-aggressive-loop-optimizations \
-                   -mcpu=cortex-a53 -mtune=cortex-a53
+                   -mcpu=cortex-a53+crc -mtune=cortex-a53
 
 # These flags need a special toolchain to split them off
 KBUILD_CFLAGS	+= $(call cc-option,-mlow-precision-recip-sqrt,) \
