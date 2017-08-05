@@ -18,7 +18,6 @@ include $(srctree)/arch/arm64/boot/dts/qcom/Makefile
 
 targets := Image Image-dtb Image.gz Image.gz-dtb
 
-dtb-y += $(notdir $(wildcard $(obj)/dts/*.dtb))
 DTB_NAMES := $(subst $\",,$(CONFIG_BUILD_ARM64_APPENDED_DTB_IMAGE_NAMES))
 ifneq ($(DTB_NAMES),)
 DTB_LIST := $(addsuffix .dtb,$(DTB_NAMES))
@@ -30,9 +29,6 @@ DTB_OBJS := $(addprefix $(obj)/dts/,$(DTB_LIST))
 $(obj)/Image: vmlinux FORCE
 	$(call if_changed,objcopy)
 
-$(obj)/Image.wrapper: $(obj)/Image FORCE
-	$(CONFIG_SHELL) $(srctree)/$(src)/wrapper $(obj)/Image
-
 $(obj)/Image.bz2: $(obj)/Image FORCE
 	$(call if_changed,bzip2)
 
@@ -42,8 +38,6 @@ $(obj)/Image.gz: $(obj)/Image FORCE
 $(obj)/Image.gz-dtb: $(obj)/Image.gz $(DTB_OBJS) FORCE
 	$(call if_changed,cat)
 
-$(obj)/Image-dtb: $(obj)/Image.wrapper $(DTB_OBJS) FORCE
-	$(call if_changed,cat)
 
 $(obj)/Image.lz4: $(obj)/Image FORCE
 	$(call if_changed,lz4)
