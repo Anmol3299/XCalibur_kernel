@@ -242,8 +242,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-nest-optimize
-HOSTCXXFLAGS = -O2 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-flatten -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-nest-optimize
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -O2 -fomit-frame-pointer -std=gnu89 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-block -floop-interchange -floop-nest-optimize -floop-parallelize-all -floop-strip-mine -ftree-loop-linear
+HOSTCXXFLAGS = -O2 -flto -fgcse-las -fgraphite -fgraphite-identity -floop-block -floop-interchange -floop-nest-optimize -floop-parallelize-all -floop-strip-mine -ftree-loop-linear
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
@@ -324,9 +324,12 @@ $(srctree)/scripts/Kbuild.include: ;
 include $(srctree)/scripts/Kbuild.include
 
 # Set optimization flags for gcc
- CC_FLAGS := -O2 -fmodulo-sched -fmodulo-sched-allow-regmoves \
-             -fira-loop-pressure -ftree-vectorize \
-             -fshrink-wrap-separate -fpredictive-commoning -mtune=cortex-a53 \
+ CC_FLAGS := -O2 -fira-loop-pressure -fivopts \
+             -fmodulo-sched -fmodulo-sched-allow-regmoves -fpredictive-commoning \
+             -fsched2-use-superblocks -fshrink-wrap-separate \
+             -ftree-vectorize -mtune=cortex-a53 \
+             --param max-reload-search-insns=250 \
+             --param max-cselib-memory-locations=1000 \
              -Wno-maybe-uninitialized -Wno-misleading-indentation \
              -Wno-array-bounds -Wno-shift-overflow
 
@@ -353,12 +356,12 @@ CHECK		= sparse
 CHECKFLAGS     := -D__linux__ -Dlinux -D__STDC__ -Dunix -D__unix__ \
 		  -Wbitwise -Wno-return-void $(CF)
 
-GRAPHITE       := -fgraphite -fgraphite-identity -floop-parallelize-all -ftree-loop-linear -floop-interchange -floop-strip-mine -floop-block -floop-nest-optimize
+GRAPHITE       := -fgraphite -fgraphite-identity -floop-block -floop-interchange -floop-nest-optimize -floop-parallelize-all -floop-strip-mine -ftree-loop-linear
 
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  = --strip-debug
-CFLAGS_KERNEL	= $(GRAPHITE) -fmodulo-sched -fmodulo-sched-allow-regmoves -ftree-loop-vectorize -ftree-loop-distribute-patterns -ftree-slp-vectorize -fvect-cost-model -ftree-partial-pre -fgcse-after-reload -fgcse-lm -fgcse-sm -fsched-spec-load -ffast-math -fsingle-precision-constant -fpredictive-commoning -fsanitize=leak -mcpu=cortex-a53 -mtune=cortex-a53
+CFLAGS_KERNEL	= $(GRAPHITE) -ffast-math -fgcse-after-reload -fgcse-lm -fgcse-sm -fipa-cp -fmodulo-sched -fmodulo-sched-allow-regmoves -fpredictive-commoning -fsched-spec-load -fsingle-precision-constant -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-partial-pre -ftree-slp-vectorize -fvect-cost-model -mcpu=cortex-a53 -mtune=cortex-a53
 AFLAGS_KERNEL	= $(GRAPHITE)
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
@@ -393,11 +396,11 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
 		   -fno-delete-null-pointer-checks \
 		   -std=gnu89 \
                    -O2 -g0 -DNDEBUG \
-                   -fgnu89-inline -fivopts \
+                   -ffast-math -fgcse-after-reload -fgnu89-inline -fivopts \
                    -fmodulo-sched -fmodulo-sched-allow-regmoves \
-                   -fno-tree-vectorize -ffast-math -fsched2-use-superblocks \
-                   -funswitch-loops -fpredictive-commoning -fgcse-after-reload \
-                   -fno-aggressive-loop-optimizations \
+                   -fno-aggressive-loop-optimizations -fno-tree-vectorize \
+                   -fpredictive-commoning -fsched2-use-superblocks \
+                   -ftree-vectorize -funswitch-loops \
                    -mcpu=cortex-a53+crc -mtune=cortex-a53
 
 # These flags need a special toolchain to split them off
