@@ -3,18 +3,18 @@
 #
 
 CFLAGS_KERNEL := -fno-graphite \
-          	-fno-graphite-identity \
-          	-fno-loop-flatten \
-          	-fno-tree-loop-linear \
-          	-fno-loop-interchange \
-          	-fno-loop-strip-mine \
-          	-fno-loop-block \
-          	-fno-loop-nest-optimize \
-          	-fno-loop-unroll-and-jam \
-          	-fno-loop-parallelize-all \
-          	-ftree-parallelize-loops=0 \
-          	-fno-openmp \
-		-Wno-unused-function
+               	 -fno-graphite-identity \
+          	 -fno-loop-block \
+          	 -fno-loop-flatten \
+          	 -fno-loop-interchange \
+          	 -fno-loop-nest-optimize \
+          	 -fno-loop-parallelize-all \
+          	 -fno-loop-strip-mine \
+          	 -fno-loop-unroll-and-jam \
+          	 -fno-openmp \
+          	 -fno-tree-loop-linear \
+          	 -ftree-parallelize-loops=0 \
+		 -Wno-unused-function
 
 obj-$(CONFIG_EXT4_FS) += ext4.o
 

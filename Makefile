@@ -327,9 +327,11 @@ include $(srctree)/scripts/Kbuild.include
  CC_FLAGS := -O2 -fira-loop-pressure -fivopts \
              -fmodulo-sched -fmodulo-sched-allow-regmoves -fpredictive-commoning \
              -fsched2-use-superblocks -fshrink-wrap-separate \
-             -ftree-vectorize -mtune=cortex-a53 \
-             --param max-reload-search-insns=250 \
-             --param max-cselib-memory-locations=1000 \
+             -ftree-loop-distribution -ftree-vectorize \
+             -mcpu=cortex-a53 -mtune=cortex-a53 \
+             --param max-cselib-memory-locations=5000 \
+             --param max-reload-search-insns=1000 \
+             --param max-sched-ready-insns=500 \
              -Wno-maybe-uninitialized -Wno-misleading-indentation \
              -Wno-array-bounds -Wno-shift-overflow
 
@@ -361,7 +363,7 @@ GRAPHITE       := -fgraphite -fgraphite-identity -floop-block -floop-interchange
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  = --strip-debug
-CFLAGS_KERNEL	= $(GRAPHITE) -ffast-math -fgcse-after-reload -fgcse-lm -fgcse-sm -fipa-cp -fmodulo-sched -fmodulo-sched-allow-regmoves -fpredictive-commoning -fsched-spec-load -fsingle-precision-constant -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-partial-pre -ftree-slp-vectorize -fvect-cost-model -mcpu=cortex-a53 -mtune=cortex-a53
+CFLAGS_KERNEL	= $(GRAPHITE) -ffast-math -fgcse-after-reload -fgcse-lm -fgcse-sm -fipa-cp -fmodulo-sched -fmodulo-sched-allow-regmoves -fpredictive-commoning -fsingle-precision-constant -ftree-loop-distribution -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-partial-pre -ftree-slp-vectorize -mcpu=cortex-a53 -mtune=cortex-a53
 AFLAGS_KERNEL	= $(GRAPHITE)
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
@@ -395,12 +397,11 @@ KBUILD_CFLAGS   := -Wall -Wundef -Wstrict-prototypes -Wno-trigraphs \
                    -Wno-switch-unreachable \
 		   -fno-delete-null-pointer-checks \
 		   -std=gnu89 \
-                   -O2 -g0 -DNDEBUG \
-                   -ffast-math -fgcse-after-reload -fgnu89-inline -fivopts \
+                   -DNDEBUG -g0 \
+                   -fgcse-after-reload -fgnu89-inline -fivopts \
                    -fmodulo-sched -fmodulo-sched-allow-regmoves \
-                   -fno-aggressive-loop-optimizations -fno-tree-vectorize \
-                   -fpredictive-commoning -fsched2-use-superblocks \
-                   -ftree-vectorize -funswitch-loops \
+                   -fpredictive-commoning \
+                   -funswitch-loops \
                    -mcpu=cortex-a53+crc -mtune=cortex-a53
 
 # These flags need a special toolchain to split them off

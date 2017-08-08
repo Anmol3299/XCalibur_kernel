@@ -1,3 +1,18 @@
+CFLAGS_KERNEL := -fno-graphite \
+               	 -fno-graphite-identity \
+          	 -fno-loop-block \
+          	 -fno-loop-flatten \
+          	 -fno-loop-interchange \
+          	 -fno-loop-nest-optimize \
+          	 -fno-loop-parallelize-all \
+          	 -fno-loop-strip-mine \
+          	 -fno-loop-unroll-and-jam \
+          	 -fno-openmp \
+          	 -fno-tree-loop-linear \
+          	 -ftree-parallelize-loops=0 \
+		 -Wno-unused-function
+
+
 ccflags-$(CONFIG_POWER_SUPPLY_DEBUG) := -DDEBUG
 
 power_supply-y				:= power_supply_core.o
