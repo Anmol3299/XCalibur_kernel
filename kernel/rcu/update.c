@@ -126,7 +126,7 @@ void exit_rcu(void)
 		return;
 	t->rcu_read_lock_nesting = 1;
 	barrier();
-	t->rcu_read_unlock_special = RCU_READ_UNLOCK_BLOCKED;
+	t->rcu_read_unlock_special.b.blocked = true;
 	__rcu_read_unlock();
 }
 
