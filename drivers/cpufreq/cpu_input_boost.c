@@ -100,16 +100,6 @@ static void unboost_all_cpus(struct boost_policy *b);
 static void update_online_cpu_policy(void);
 static bool validate_cpu_freq(unsigned int cpu, uint32_t *freq);
 
-static inline bool cpufreq_next_valid(struct cpufreq_frequency_table **pos)
-{
-	while ((*pos)->frequency != CPUFREQ_TABLE_END)
-		if ((*pos)->frequency != CPUFREQ_ENTRY_INVALID)
-			return true;
-		else
-			(*pos)++;
-	return false;
-}
-
 static void ib_boost_main(struct work_struct *work)
 {
 	struct boost_policy *b = boost_policy_g;
