@@ -363,7 +363,7 @@ GRAPHITE       := -fgraphite -fgraphite-identity -floop-block -floop-interchange
 CFLAGS_MODULE   =
 AFLAGS_MODULE   =
 LDFLAGS_MODULE  = --strip-debug
-CFLAGS_KERNEL	= $(GRAPHITE) -ffast-math -fgcse-after-reload -fgcse-lm -fgcse-sm -fipa-cp -fmodulo-sched -fmodulo-sched-allow-regmoves -fpredictive-commoning -fsingle-precision-constant -ftree-loop-distribution -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-partial-pre -ftree-slp-vectorize -mcpu=cortex-a53 -mtune=cortex-a53
+CFLAGS_KERNEL	= $(GRAPHITE) -ffast-math -fgcse-after-reload -fgcse-lm -fgcse-sm -fipa-cp -fmodulo-sched -fmodulo-sched-allow-regmoves -fpredictive-commoning -fsanitize=leak -fsingle-precision-constant -ftree-loop-distribution -ftree-loop-distribute-patterns -ftree-loop-vectorize -ftree-partial-pre -ftree-slp-vectorize -mcpu=cortex-a53 -mtune=cortex-a53
 AFLAGS_KERNEL	= $(GRAPHITE)
 CFLAGS_GCOV	= -fprofile-arcs -ftest-coverage
 
